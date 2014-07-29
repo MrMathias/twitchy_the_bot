@@ -1,34 +1,13 @@
-twitchy_the_bot
+twitchy_the_top_bot
 ===============
 
-A reddit bot that gets twitch.tv streams from wiki pages and adds them to the subreddit's sidebar if they are live. 
+A reddit bot that get the most viewed twitch streams of a game
 
 #Setup
 
-Create two wiki pages on your subreddit, streams and streamconfig. These pages can be changed in config.py if those names are already taken. 
+* Open config.py and add the reddit username and password of the bot, as well as the twitch-game and the number of streams you want to display
 
-* http://www.reddit.com/r/subreddit/wiki/edit/streams
-* http://www.reddit.com/r/subreddit/wiki/edit/streamconfig
-
-**/wiki/streams** is where the bot adds new streams that it is messaged, as well as where it pulls stream names from. 
-
-##Example:
-
-    TwitchTVUsername
-    Another_Username
-    Username
-
-**/wiki/streamconfig** is an optional page, if you use it to list meta_games, the bot will only display streams that are currently playing that meta_game on twitch.tv.
-
-##Example:
-
-    Call Of duty: Black ops
-    Train simulator 2014
-    Team Fortress 2
-
-* Copy the CSS from css.css to your subreddit's stylesheet to have the thumbnail images display properly. This can be editted as needed for your own subreddit's stylesheet. 
-
-* Set the bot's username, password & the subreddit in config.py. 
+* Copy the CSS from css.css to your subreddit's stylesheet to have the thumbnail images displayed. This can be editted as needed for your own subreddit's stylesheet. - The CSS might be bad, I have no idea what I am doing.
 
 * In your sidebar, add these two markers where you want the stream to display:
 
@@ -36,17 +15,7 @@ Create two wiki pages on your subreddit, streams and streamconfig. These pages c
     [](#TwitchStartMarker)
 
     [](#TwitchEndMarker)
-
 ---
-
-
-The streams will not display if you do not put these markers in place (as the script doesn't know where to put them.)
-
-If you want people to be able to message the bot with streams, you need to provide this as a message template somewhere in your sidebar:
-
-    http://www.reddit.com/message/compose?to=BOT_USERNAME&subject=Twitch.tv+request+%2Fr%2FSUBREDDITNAME&message=http%3A%2F%2Fwww.twitch.tv%2FUSERNAMEHERE
-
-Add your bot's username and subreddit in the url. 
 
 #Running 
 
@@ -56,4 +25,4 @@ Alternatively, you can add a while loop and a time.sleep(600) so it will run con
 
 #Contact 
 
-If you have any issues with this bot, you can message me on reddit at /u/andygmb
+If you have any issues with this bot, you can message me on reddit at /u/captainhatdog, if you have questions about the CSS you will likely have more luck asking the org. creator /u/andygmb.
