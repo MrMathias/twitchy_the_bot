@@ -1,7 +1,7 @@
 twitchy_the_top_bot
 ===============
 
-A reddit bot that get the most viewed Twitch streams of a game
+A reddit bot that get the most viewed Twitch streams of a game and display them on the sidebar with large thumbnails
 
 #Setup
 
