@@ -1,7 +1,7 @@
 twitchy_the_top_bot
 ===============
 
-A reddit bot that get the most viewed twitch streams of a game
+A reddit bot that get the most viewed Twitch streams of a game
 
 #Setup
 
@@ -19,9 +19,7 @@ A reddit bot that get the most viewed twitch streams of a game
 
 #Running 
 
-The script only runs once, then exits. You need to run it on a cron job/schedule however often you want it to run. The recommended time is every 10 minutes. 
-
-Alternatively, you can add a while loop and a time.sleep(600) so it will run continually, but only loop every 10 minutes.
+The script is intended to be used with a scheduler. If you simply want to run the code continuesly, a while loop and sleep() should be added to the script.
 
 #Contact 
 
