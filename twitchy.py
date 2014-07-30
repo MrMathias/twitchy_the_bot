@@ -74,14 +74,14 @@ def create_spritesheet(thumblist):
 	w, h = 255, 143 * (len(thumblist) or 1)
 	spritesheet = Image.new("RGB", (w, h))
 	xpos = 0
-	ypos = 0 # ypos starts 20px down, which leaves a black background for text.
+	ypos = 0
 	res = (255,143)
 	for img in thumblist:
 		bbox = (xpos, ypos)
 		img = img.resize(res, Image.ANTIALIAS) #shrinks image and changes the aspect ratio to 16:9
 		spritesheet.paste(img,bbox)
 		ypos = ypos + 143 
-		# Increase ypos by 143+20 pixels (move down the image by 143+20 pixels 
+		# Increase ypos by 143 pixels (move down the image by 143px)
 		# so we can place the image in the right position next time this loops.)
 	spritesheet.save("thumbnails/img.png") 
 	# Save it as img.png in thumbnails folder
