@@ -1,12 +1,14 @@
 import praw, HTMLParser, json, requests, re, time
 from config import username, password, subreddit, twitchgame, streamnum
-from PIL import Image
+from PIL import Image, ImageDraw
 from StringIO import StringIO
 
 def get_stream_list(subreddit, twitchgame, streamnum):
 	# meta-request, channel data are ranked by the amount of cur. viewers
 	livestreams = []
-	api_link = "http://api.justin.tv/api/stream/list.json?meta_game=" + twitchgame
+	
+
+	api_link = "https://api.twitch.tv/kraken/streams?game=" + twitchgame
 	livestreams = get_stream_info(api_link, livestreams)
 	results, preview_images = parse_stream_info(livestreams, streamnum)
 	return results, preview_images
@@ -34,27 +36,29 @@ def parse_stream_info(livestreams, streamnum):
 	if not len(livestreams) or streamnum == 0:
 		results.append(">No streams are currently live.\n") 
 	else:
-		for streamer_list in livestreams: 
-		# Looping through the JSON structure 
-			for streamer_info_dict in streamer_list:
-					if n == streamnum:
-						break
-				# Set title to the stream title 
-					title = streamer_info_dict["title"]
+		for streamer_list in livestreams:
+		# Looping through the JSON structure
+			for streamer_info_dict in streamer_list['streams']:
+				#print streamer_info_dict["channel"]["status"]
+				if n == streamnum:
+					break
+				else:
+				# Set title to the stream title
+					title = streamer_info_dict["channel"]["status"]
 				# Removing characters that can break reddit formatting
 					title = re.sub(r'[*)(>/#\[\]]', '', title)
 					title = title.replace("\n", "")
 				# If the title's length is  more than 30 chars, only use the first 30 for the title on reddit, 
 				# then add on some elipises or whatever the fuck they're called
-					name = streamer_info_dict["channel"]["login"]
-					if (len(title) >= 33):
-						title = title[0:30] + "..." 
+					name = streamer_info_dict["channel"]["display_name"]	
+					if (len(title) >= 30):
+						title = title[0:29] + "..." 
 				# Formats the viewercount to add commas like: 1,000 
-					viewercount = "{:,}".format(streamer_info_dict["channel_count"])
+					viewercount = "{:,}".format(streamer_info_dict["viewers"])
 				# Appending the thumbnail url to a list to use later 
-					thumbnail_urls.append(streamer_info_dict["channel"]["screen_cap_url_huge"]) # can be small, medium, larger or huge
+					thumbnail_urls.append(streamer_info_dict["preview"]["large"]) # can be small 80x50, medium 320x200, larger 640x400
 				# Constructing the final string we'll post to the reddit sidebar
-					results.append("> " + "\n" + str(n) + ". " + "**[" + title + "](http://twitch.tv/" + name + ")**" + "[" + "\n" + ">" + name + "](http://twitch.tv/" + name + ")" + "\n")
+					results.append("> " + "\n" + str(n) + ". " + "**[" + title + "](" + streamer_info_dict["channel"]["url"] + ")**" + "[" + "\n" + ">*" + name + "*](" + streamer_info_dict["channel"]["url"] + ")" + "\n")
 					# org. results.append("> " + "\n" + "> " + "\n" + str(n) + ". " + "**[" + name + "](http://twitch.tv/" + name + ")**" + "\n" + "[" + " \- " + title + "](http://twitch.tv/" + name + ")" + "\n") 
 					n += 1
 				# n is used above in the final string to make it an ordered list 1. 2. 3., etc.
@@ -71,23 +75,27 @@ def parse_stream_info(livestreams, streamnum):
 
 def create_spritesheet(thumblist):
 	# Puts the thumbnail images into a spritesheet.
-	w, h = 255, 143 * (len(thumblist) or 1)
+	thmbw, thmbh = 268, 151
+	w, h = 268, 151 * (len(thumblist) or 1)
 	spritesheet = Image.new("RGB", (w, h))
 	xpos = 0
 	ypos = 0
-	res = (255,143)
 	for img in thumblist:
-		bbox = (xpos, ypos)
-		img = img.resize(res, Image.ANTIALIAS) #shrinks image and changes the aspect ratio to 16:9
+		bbox = ( xpos, ypos )
+		img = img.resize(( thmbw, thmbh ), Image.ANTIALIAS) #shrinks image and changes the aspect ratio to 16:9	
+		
+		# draw = ImageDraw.Draw( img )
+		# draw.polygon([( xpos, ypos ),( xpos, ypos+20 ),( thmbw , ypos+20 ),( thmbw , ypos )], fill=0 )
+		# del draw
+
 		spritesheet.paste(img,bbox)
-		ypos = ypos + 143 
-		# Increase ypos by 143 pixels (move down the image by 143px)
+		ypos = ypos + 151 
+		# Increase ypos by 151 pixels (move down the image by 143px)
 		# so we can place the image in the right position next time this loops.)
 	spritesheet.save("thumbnails/img.png") 
 	# Save it as img.png in thumbnails folder
-
 if __name__ == "__main__":
-	reddit = praw.Reddit("Twitch.tv sidebar bot for " + subreddit + " by /u/andygmb") #log into reddit
+	reddit = praw.Reddit("Twitch.tv sidebar bot for " + subreddit + " by /u/captainhatdog") #log into reddit
 	reddit.login(username=username, password=password)
 	subreddit = reddit.get_subreddit(subreddit)
 	results, preview_images = get_stream_list(subreddit, twitchgame=twitchgame, streamnum=streamnum)
